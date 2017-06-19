@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="layout.css">
+    <script type="text/javascript" src="clicker.js"></script>
+    <title>ClickerQuest</title>
+</head>
+<body>
+
+<h1>ClickerQuest
+    <button id="saveBtn" class="floatright" onClick="save()">Save</button>
+    <button id="loadBtn" class="floatright" onClick="load()">Load</button>
+</h1>
+
+<div id="quest">
+    <button id="questBtn" class="floatleft" onClick="updateGold(1)">Quest</button>
+
+    <div id="resources" class="boxed floatright">
+        <span class="label">Gold: </span>
+        <span id="goldAmt" class="number">0</span> ⛁
+    </div>
+</div>
+
+
+<div id="party" class="hide">
+    <h3 class="inline">Hire Adventurers:</h3>
+    <button id="hireFtr" onClick="hire('fighter')">Fighter (10 ⛁)</button>
+</div>
+
+<div id="suppliers" class="hide">
+    <h3>Hire Suppliers:
+        <button id="hireArm" onClick="">Armorer (50 ⛁)</button>
+    </h3>
+
+    <div id="armorer" class="boxed hide">
+        <div class="flexbox">
+        <span class="label">Armorers: </span>
+        <span class="foo"><span id="armFill" class="bar"></span></span>
+            <span class="countdown" id="armCD">000 sec</span>
+
+        </div>
+        <div class="flexbox">
+        <span class="stats"> Hired: <span id="armHired" class="number"></span></span>
+            <span class="stats"> Quality Level: <span id="armQual" class="number"></span></span>
+        <span class="stats right"> Production/sec: <span id="armProd" class="number"></span></span>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

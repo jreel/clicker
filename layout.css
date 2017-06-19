@@ -1,0 +1,111 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    width: 800px;
+}
+
+span.foo {
+    width: 620px;
+    height: 10px;
+    background: #cccccc;
+    display: inline-block;
+    margin-left: auto;
+}
+
+span.bar {
+    width: 1%;
+    height: 10px;
+    background: #888888;
+}
+
+.flexbox {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    -webkit-align-items: center;
+    align-items: center;
+}
+
+.boxed {
+    border: 1px solid #888888;
+    padding: 0.5em;
+    margin: 1em 0px;
+}
+
+.inline {
+    display: inline-block;
+    width: auto;
+}
+
+.right {
+    text-align: right;
+}
+
+.floatleft {
+    float: left;
+}
+
+.floatright {
+    float: right;
+}
+
+.label {
+    font-weight: bold;
+}
+
+.stats {
+    font-size: 0.9em;
+    font-variant: small-caps;
+    display: inline-block
+}
+
+.info {
+    font-size: 0.8em;
+    font-style: italic;
+}
+
+.hide {
+    visibility: hidden;
+}
+
+.countdown {
+    font-size: 0.9em;
+    font-style: italic;
+    width: 4.5em;
+    text-align: right;
+}
+
+button {
+    padding: 0.2em 0.5em;
+    margin: 0.5em 0px;
+}
+
+
+#questBtn {
+    padding: 0px 0px 0px 0px !important;
+    margin: 0px 0px 0px 0px !important;
+    box-sizing: border-box;
+    font-weight: bold;
+    font-size: 0.9em;
+    height: 50px;
+    padding: 0px 1.5% 0px 1.5% !important
+}
+#resources {
+    width: 90%;
+    padding: 0px 0px 0px 0px  !important;
+    margin: 0px 0px 0px 0px !important;
+    box-sizing: border-box;
+    height: 50px;
+    line-height: 50px;
+    padding: 0px 0.5em 0px 0.5em !important
+}
+
+#quest {
+    padding-bottom: 2em;
+}
+#party {
+    padding-top: 2em;
+}
