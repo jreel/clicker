@@ -310,12 +310,10 @@ function Adventurer(title, properties) {
     this.countdown = 0;
     this.gps = 0;
 
+    this.factor = 1.1;      // TODO -- tweak this
 }
-Adventurer.prototype.Hire = function() {
-    // only called for the very first time purchasing a hero;
-    // creates the hero div
-
-    // verify cost
+Adventurer.prototype.CanBuy = function() {
+    // verify all resource costs are met
     var alltrue = false;
     for(var req in this.cost) {
         if(resources[req] >= this.cost[req]) {
@@ -325,7 +323,35 @@ Adventurer.prototype.Hire = function() {
             alltrue = false;
         }
     }
-    if (alltrue) {
+    return alltrue;
+}
+Adventurer.prototype.NextCost = function() {
+    // calculate next cost; disable upgrade button if needed
+    var btn = elid("btn" + this.id);    // TODO -- upgrade other stats (MOAR buttonz!)
+    var enable = false;
+    for(var req in this.cost) {
+        this.cost[req] = Math.floor(this.cost[req] * Math.pow(this.factor, this.level));
+        if(resources[req] >= this.cost[req]) {
+            enable = true;
+        }
+        else {
+            enable = false;
+        }
+    }
+    if (enable) {
+        // enable button
+        btn.disabled = false;
+    }
+    else {
+        btn.disabled = true;
+    }
+    retext(elid("req" + this.id), this.cost.gold + " <span class='gold'> </span>");       //   TODO -- fix this
+}
+Adventurer.prototype.Hire = function() {
+    // only called for the very first time purchasing a hero;
+    // creates the hero div
+
+    if (this.CanBuy) {
         // create div
         this.div = advDiv(this.id, this.title);
         elid("party").appendChild(this.div);
@@ -351,11 +377,7 @@ Adventurer.prototype.Hire = function() {
         elid("hire" + this.id).disabled = true;
 
         // calculate next cost
-        var factor = 1.1;           // TODO: move this elsewhere (DEF maybe?)
-        for(var req in this.cost) {
-            this.cost[req] = Math.floor(this.cost[req] * Math.pow(factor, this.level));
-        }
-        retext(elid("req" + this.id), this.cost.gold + " <span class='gold'> </span>");       //   TODO -- fix this
+        this.NextCost();
     }
 }
 
@@ -363,17 +385,7 @@ Adventurer.prototype.Upgrade = function() {
     // called to level up the hero
     // TODO - upgrade different stats
 
-    // check requirements
-    var alltrue = false;
-    for(var req in this.cost) {
-        if(resources[req] >= this.cost[req]) {
-            alltrue = true;
-        }
-        else {
-            alltrue = false;
-        }
-    }
-    if (alltrue) {
+    if (this.CanBuy) {
         // increment level
         this.level++;
         retext(elid("lvl" + this.id), this.level);
@@ -388,27 +400,7 @@ Adventurer.prototype.Upgrade = function() {
         }
 
         // calculate next cost; disable upgrade button if needed
-        var btn = elid("btn" + this.id);
-        var enable = false;
-        var factor = 1.1;           // TODO: move this elsewhere (DEF maybe?)
-        for(var req in this.cost) {
-            this.cost[req] = Math.floor(this.cost[req] * Math.pow(factor, this.level));
-            if(resources[req] >= this.cost[req]) {
-                enable = true;
-            }
-            else {
-                enable = false;
-            }
-        }
-        if (enable) {
-            // enable button
-            btn.disabled = false;
-        }
-        else {
-            btn.disabled = true;
-        }
-        retext(elid("req" + this.id), this.cost.gold + " <span class='gold'> </span>");       //   TODO -- fix this
-
+        this.NextCost();
     }
 }
 
