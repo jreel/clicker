@@ -23,10 +23,17 @@ span.bar {
 .flexbox {
     display: -webkit-flex;
     display: flex;
+}
+.flexspread {
+    display: -webkit-flex;
+    display: flex;
     -webkit-justify-content: space-between;
     justify-content: space-between;
     -webkit-align-items: center;
     align-items: center;
+}
+.flex {
+    margin: auto 0.2em;
 }
 
 .boxed {
@@ -108,4 +115,24 @@ button {
 }
 #party {
     padding-top: 2em;
+}
+
+.gold {
+    display: inline-block;
+    height: 0.4em;
+    width: 0.8em;
+    border-radius: 0.5em;
+    border: 1px solid orange;
+
+    background: -webkit-radial-gradient(yellow, orange);
+    background: -o-radial-gradient(yellow, orange);
+    background: -moz-radial-gradient(yellow, orange);
+    background: radial-gradient(yellow, orange);
+
+    /*
+    background: -webkit-linear-gradient(left, orange, yellow, orange);
+    background: -o-linear-gradient(left, orange, yellow, orange);
+    background: -moz-linear-gradient(left, orange, yellow, orange);
+    background: linear-gradient(left, orange, yellow, orange);
+    */
 }

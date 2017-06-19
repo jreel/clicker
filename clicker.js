@@ -355,7 +355,7 @@ Adventurer.prototype.Hire = function() {
         for(var req in this.cost) {
             this.cost[req] = Math.floor(this.cost[req] * Math.pow(factor, this.level));
         }
-        retext(elid("req" + this.id), this.cost.gold + "⛁");       //   TODO -- fix this
+        retext(elid("req" + this.id), this.cost.gold + " <span class='gold'> </span>");       //   TODO -- fix this
     }
 }
 
@@ -407,7 +407,7 @@ Adventurer.prototype.Upgrade = function() {
         else {
             btn.disabled = true;
         }
-        retext(elid("req" + this.id), this.cost.gold + "⛁");       //   TODO -- fix this
+        retext(elid("req" + this.id), this.cost.gold + " <span class='gold'> </span>");       //   TODO -- fix this
 
     }
 }
@@ -420,14 +420,14 @@ function advDiv(id, label) {
     var adiv = newEl("DIV", {id: "div" + id, class: "boxed hide"});
 
     // first subdiv
-    var d1 = newEl("DIV", {class: "flexbox"});
+    var d1 = newEl("DIV", {class: "flexspread"});
     d1.appendChild(newEl("SPAN", {class: "label", text: titleCase(label) + ": "}));
     d1.appendChild(newBar(id));
     d1.appendChild(newEl("SPAN", {id: "cd" + id, class: "countdown", text: "000 sec"}));
     adiv.appendChild(d1);
 
     // second subdiv
-    var d2 = newEl("DIV", {class: "flexbox"});
+    var d2 = newEl("DIV", {class: "flexspread"});
 
     var d21 = newEl("SPAN", {class: "stats", text: "Level: "});
         d21.appendChild(newEl("SPAN", {id: "lvl" + id, class: "number", text: "1"}));
