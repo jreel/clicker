@@ -2,50 +2,110 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Hammersmith+One" />
     <link rel="stylesheet" type="text/css" href="layout.css">
+    <link rel="stylesheet" type="text/css" href="anim.css">
+    <script type="text/javascript" src="def.js"></script>
     <script type="text/javascript" src="clicker.js"></script>
     <title>ClickerQuest</title>
 </head>
 <body>
 
 <h1>ClickerQuest
+    <div id="goldDisplay">
+        <span class="label">Gold: </span><span id="goldAmt" class="number">0</span> <span class="gold"></span>
+    </div>
     <button id="saveBtn" class="floatright" onClick="save()">Save</button>
     <button id="loadBtn" class="floatright" onClick="load()">Load</button>
 </h1>
 
-<div id="quest">
-    <button id="questBtn" class="floatleft" onClick="updateGold(1)">Quest</button>
-
-    <div id="resources" class="boxed floatright">
-        <span class="label">Gold: </span>
-        <span id="goldAmt" class="number">0</span> <span class="gold"> </span>
-    </div>
-</div>
-
-
-<div id="party" class="hide">
-    <h3 class="inline">Hire Adventurers:</h3>
-    <button id="hireFtr" onClick="hire('fighter')">Fighter (10 <span class="gold"> </span>)</button>
-</div>
-
-<div id="suppliers" class="hide">
-    <h3>Hire Suppliers:
-        <button id="hireArm" onClick="">Armorer (50 <span class="gold"> </span>)</button>
-    </h3>
-
-    <div id="armorer" class="boxed hide">
-        <div class="flexspread">
-        <span class="label">Armorers: </span>
-        <span class="foo"><span id="armFill" class="bar"></span></span>
-            <span class="countdown" id="armCD">000 sec</span>
-
+<div id="quest flexbox">
+    <button id="questBtn" class="floatleft" onClick="playerClick()">Quest</button>
+    <div class="l-pad">
+        <div class="flexbox">
+            <progress id="questBar" class="autowidth" max="1" value="0"></progress>
+            <span class="countdown" id="questCD">00:00:00</span>
         </div>
-        <div class="flexspread">
-        <span class="stats"> Hired: <span id="armHired" class="number"></span></span>
-            <span class="stats"> Quality Level: <span id="armQual" class="number"></span></span>
-        <span class="stats right"> Production/sec: <span id="armProd" class="number"></span></span>
+
+        <div id="status" class="hide">Battle!</div>
+
+        <div id="battle" class="flexcenter autowidth hide">
+            <progress id="partyBar" class="autowidth" max="100" value="15"></progress>
+            <span class="emoji">⚔️</span>
+            <progress id="enemyBar" class="autowidth" max="100" value="15"></progress>
+
+            <span class="abs-below flexspread autowidth">
+                <span class="nowrap info" id="battleParty">Your Party</span>
+                <span class="nowrap info" id="battleEnemy">Enemy</span>
+            </span>
+        </div>
+
+        <div class="flexbox" style="display:none">
+            <progress id="recovBar" class="autowidth" max="100" value="15"></progress>
+            <span class="countdown" id="recovCD">00:00:00</span>
         </div>
     </div>
+</div>
+<br class="clear">
+
+<fieldset id="party" class="">
+    <legend>Heroes:</legend>
+
+    <!--
+    <div class="card">
+        <span class="title">Fighter</span>
+        <span class="level"><span class="info">Level</span>
+            <span class="lvlnum">1</span></span>
+        <div class="portrait"></div>
+        <span class="heroName">Franklin</span>
+        <table class="stats">
+            <tr><td class="label">defense: </td><td class="number">+1</td></tr>
+            <tr><td class="label">offense: </td><td class="number">+1</td></tr>
+        </table>
+
+        <button class="levelup" onClick="">Level Up (10 <span class="gold"></span>)</button>
+    </div>
+
+    <div class="card">
+        <span class="title">Fighter</span>
+
+        <button disabled id="btnFtr" class="levelup" onClick="">Recruit (10 <span class="gold"></span>)</button>
+    </div>
+        -->
+</fieldset>
+
+<fieldset id="suppliers" class="">
+    <legend>Suppliers:</legend>
+
+    <!--
+    <div class="card">
+        <span class="title">Armorers</span>
+        <span class="number hired">10</span>
+        <table class="boosts">
+            <tr class="info"><th>boosts:</th><th>each</th><th>total</th></tr>
+            <tr><td class="label">DEF </td><td class="number">+1</td><td class="number">+10</td></tr>
+        </table>
+        <button class="hire" onClick="">Hire (50 <span class="gold"></span>)</button>
+    </div>
+
+
+    <div class="card">
+        <span class="title">Armorers</span>
+
+        <button disabled id="btnArmr" class="hire" onClick="">Hire (50 <span class="gold"></span>)</button>
+    </div>
+    -->
+</fieldset>
+
+<div id="technical">
+    This game uses emoji (included in <a href="https://emojipedia.org/unicode-7.0/">Unicode 7.0</a>) to display some icons.
+    If the symbols don't show up for you, it may mean that you're:
+    <ol>
+        <li>not running the <a href="https://updatemybrowser.org/">latest version</a> of your browser, or</li>
+        <li>lacking an installed font which supports emoji, or</li>
+        <li>using some flavor of Linux <a href="http://probablement.net/txt/emojilinux">which lacks emoji support</a>.</li>
+    </ol>
+    If you're interested, you might try resolving the situation by installing the <a href="http://eosrei.github.io/emojione-color-font/full-demo.html">EmojiOne</a> font.
 </div>
 
 </body>
