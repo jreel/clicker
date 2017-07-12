@@ -515,12 +515,14 @@ button.levelup, button.hire {
     margin-top: 2em;
 }
 
-
-#technical {
-    font-size: 0.85em;
-    border-top: 1px solid #888888;
+#about p {
+    border-bottom: 1px solid #888888;
     padding-top: 1em;
     margin-top: 1em;
+}
+#technical {
+    font-size: 0.85em;
+    border-bottom: 0px;
 }
 #main-wrapper {
     height: 100%;
