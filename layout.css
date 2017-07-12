@@ -514,6 +514,9 @@ button.levelup, button.hire {
     padding-top: 1em 0;
     margin-top: 1em;
 }
+#about li {
+    padding-bottom: 0.5em;
+}
 #technical {
     font-size: 0.85em;
     border-bottom: 0px;
