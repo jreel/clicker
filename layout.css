@@ -509,9 +509,9 @@ button.levelup, button.hire {
 
 /* etc */
 
-#about p {
+#about div {
     border-bottom: 1px solid #888888;
-    padding-top: 1em;
+    padding-top: 1em 0;
     margin-top: 1em;
 }
 #technical {
