@@ -18,7 +18,7 @@ cqGame.quest = {
 cqGame.questing = false;    // false = recovering
 cqGame.battle = false;
 
-cqGame.updateTimer = 100;    // how often to update, in millisec
+cqGame.updateTimer = 100;    // millisec between updates
 cqGame.known = [];      // contains previewed & unlocked items
 
 function playerClick() {
@@ -44,8 +44,8 @@ function playerClick() {
         if (Object.keys(cqGame.party).length < 1) {
             // no heroes recruited yet
 
-            // set up level 1 quest
-            setupQuest(1);
+            // set up level 0 quest
+            setupQuest(0);
 
             // updateGold(1);
         }
@@ -85,7 +85,7 @@ function percentReqs(forWhat) {
 }
 
 function updateDisplay() {
-    // hide/show/change UI elements based on game status (such as gold)
+    // invis/show/change UI elements based on game status (such as gold)
 
     // if at least one hero recruited, retext the quest btn
     var pty = cqGame.party;
@@ -109,28 +109,28 @@ function updateDisplay() {
         // if card hasn't been "discovered" yet:
         if (cqGame.known.indexOf(key) == -1) {
             if (checkReqs(hero)) {
-                unhide(card);
+                vis(card);
                 unfade(card);
                 btn.disabled = false;
                 cqGame.known.push(key);
             }
-            else if (percentReqs(hero) >= 0.5) {
+            else if (percentReqs(hero) >= 0.25) {
                 // "preview" unlock -- show faded card but leave disabled
-                unhide(card);
+                vis(card);
                 fade(card);
                 btn.disabled = true;
                 cqGame.known.push(key);
             }
             else {
-                hide(card);
+                invis(card);
                 btn.disabled = true;
             }
         }
         else {
-            // if it *has* been discovered, don't hide card if reqs not met
+            // if it *has* been discovered, don't invis card if reqs not met
             // just enable/disable button
             if (checkReqs(hero)) {
-                unhide(card);
+                vis(card);
                 unfade(card);
                 btn.disabled = false;
             }
@@ -145,35 +145,36 @@ function updateDisplay() {
     for (var c = 0; c < cards.length; c++) {
         var card = cards[c];
         var title = card.getElementsByClassName("title")[0].textContent;
-        var key = title.toLowerCase();
+        // remember to change this if you change the card title to be singluar
+        var key = title.substring(0, title.length - 1).toLowerCase();
         var sup = DEF.Suppliers[key];
         var card = elid("card" + sup.id);
         var btn = elid("btn" + sup.id);
 
         if (cqGame.known.indexOf(key) == -1) {
             if (checkReqs(sup)) {
-                unhide(card);
+                vis(card);
                 unfade(card);
                 btn.disabled = false;
                 cqGame.known.push(key);
             }
-            else if (percentReqs(sup) >= 0.5) {
+            else if (percentReqs(sup) >= 0.25) {
                 // "preview" unlock -- show faded card but leave disabled
-                unhide(card);
+                vis(card);
                 fade(card);
                 btn.disabled = true;
                 cqGame.known.push(key);
             }
             else {
-                hide(card);
+                invis(card);
                 btn.disabled = true;
             }
         }
         else {
-            // if it *has* been discovered, don't hide card if reqs not met,
+            // if it *has* been discovered, don't invis card if reqs not met,
             // just enable/disable button
             if (checkReqs(sup)) {
-                unhide(card);
+                vis(card);
                 unfade(card);
                 btn.disabled = false;
             }
@@ -206,6 +207,9 @@ function gameUpdate() {     // called from window.setInterval
     //          - time / party speed? (base of 1% per second maybe)
     //          - completing a battle (large jump)
     //          - player click on button (large jump)
+
+    var pty = cqGame.party;
+
     if (cqGame.questing) {
         // advance quest progress bar
         var bar = elid("questBar");
@@ -218,7 +222,6 @@ function gameUpdate() {     // called from window.setInterval
         var addgold = 0;
 
         // loop through party
-        var pty = cqGame.party;
         for (var adv in pty) {
             addgold += (pty[adv].gps * step);
         }
@@ -247,11 +250,20 @@ function gameUpdate() {     // called from window.setInterval
 
         }
     }
-    else {  // not questing
-        // should we be questing?
+    else {  // not questing, but should we be?
         // TODO: possibly implement "recovery" phase
-        if (Object.keys(cqGame.party).length > 0) {
-            cqGame.questing = true;
+
+        // if at least one hero in the party,
+        // set up a new quest
+        if (Object.keys(pty).length > 0) {
+
+            // get total hero level
+            var lvl = 0;
+            for (hero in pty) {
+                lvl += pty[hero].level;
+            }
+
+            setupQuest(lvl);
         }
     }
 
@@ -293,11 +305,7 @@ function deleteSaveData() {
 
 
 
-// game loop
-window.setInterval(function() {
 
-    gameUpdate();
-}, cqGame.updateTimer);
 
 
 /* quest setup */
@@ -309,7 +317,8 @@ function setupQuest(level) {
 
     // set quest time based on level
     // TODO: tweak this
-    q.time = q.level; // in seconds
+    //q.time = q.level; // in seconds
+    q.time = (level < 1) ? 1 : 1.5 * q.level;
 
     var qbar = elid("questBar");
     qbar.max = q.time;
@@ -320,20 +329,34 @@ function setupQuest(level) {
 
     // random gold reward (within a range)
     // TODO: tweak this
-    q.reward = q.level;
+    //q.reward = q.level;
+    q.reward = (level < 1) ? 1 : q.level * Math.pow(1.15, q.level);
 
     cqGame.questing = true;
 }
 
 /* create divs and arrays */
 function setupHeroes() {
-    // loop through def
+    // create container divs inside party div
+    var cont = newEl("DIV", {class: "container-fluid"});
+        var row = newEl("DIV", {class: "row justify-content-start"});
+        cont.appendChild(row);
+    elid("party").appendChild(cont);
+
+    // loop through def, create divs
     var defs = DEF.Adventurers;
+    // counter -- insert clearfix after certain divs
+    /*      xs is col-4, so clear after every 3
+     *      sm is col-3, so clear after every 4
+     *      md is col-2, so clear after every 6
+     *      lg is col-1, so clear after every 12
+     */
+    var count = 0;
     for(var adv in defs) {
-        // create card -- some divs hidden by default
-        // all cards are hidden at first, revealed by unlock checks
+        // create card -- some divs invis by default
+        // all cards are invis at first, revealed by unlock checks
         var card = advDiv(adv + "");
-        elid("party").appendChild(card);
+        row.appendChild(card);
         var btn = elid("btn" + defs[adv].id);
         btn.onclick = (function(){
             var a = adv + "";
@@ -342,16 +365,38 @@ function setupHeroes() {
             }
         })();
         btn.disabled = true;        // enabled when unlock check is met
+
+        // TODO -- a better way of doing this?
+        count++;
+        if (count % 12 == 0) {
+            row.appendChild(newEl("DIV", {class: "clearfix visible-lg"}));
+        }
+        if (count % 6 == 0) {
+            row.appendChild(newEl("DIV", {class: "clearfix visible-md"}));
+        }
+        if (count % 4 == 0) {
+            row.appendChild(newEl("DIV", {class: "clearfix visible-sm"}));
+        }
+        if (count % 3 == 0) {
+            row.appendChild(newEl("DIV", {class: "clearfix visible-xs"}));
+        }
     }
 }
 function setupSuppliers() {
+    // create container divs inside party div
+    var cont = newEl("DIV", {class: "container-fluid"});
+        var row = newEl("DIV", {class: "row justify-content-start"});
+        cont.appendChild(row);
+    elid("suppliers").appendChild(cont);
+
     // loop through def
     var defs = DEF.Suppliers;
+    var count = 0;
     for(var sup in defs) {
-        // create card -- some divs hidden by default
-        // all cards are hidden at first, revealed by unlock checks
+        // create card -- some divs invis by default
+        // all cards are invis at first, revealed by unlock checks
         var card = supDiv(sup + "");
-        elid("suppliers").appendChild(card);
+        row.appendChild(card);
         var btn = elid("btn" + defs[sup].id);
         btn.onclick = (function(){
             var s = sup + "";
@@ -360,6 +405,21 @@ function setupSuppliers() {
             }
         })();
         btn.disabled = true;        // enabled when unlock check is met
+    }
+
+    // TODO -- a better way of doing this?
+    count++;
+    if (count % 12 == 0) {
+        row.appendChild(newEl("DIV", {class: "clearfix visible-lg"}));
+    }
+    if (count % 6 == 0) {
+        row.appendChild(newEl("DIV", {class: "clearfix visible-md"}));
+    }
+    if (count % 4 == 0) {
+        row.appendChild(newEl("DIV", {class: "clearfix visible-sm"}));
+    }
+    if (count % 3 == 0) {
+        row.appendChild(newEl("DIV", {class: "clearfix visible-xs"}));
     }
 }
 
@@ -389,8 +449,7 @@ function Adventurer(key) {
 
     // base income should increase by 5x each tier
     // formula 5 ^ (tier - 1) give correct progression
-    // this.baseGps = Math.pow(5, this.tier - 1);
-    this.baseGps = 10 * Math.pow(5, this.tier - 1);
+    this.baseGps = Math.pow(5, this.tier - 1);
 
     this.factor = 1.07;      // multiplicative cost factor. TODO -- tweak this?
 
@@ -442,10 +501,10 @@ Adventurer.prototype.Recruit = function() {
         // add to party table
         cqGame.party[this.key] = this;
 
-        // unhide & unfade div
+        // make visible & unfade div
         var card = elid("card" + this.id);
-        unhide(card);
-        unhide(elid("ldiv" + this.id));
+        vis(card);
+        vis(elid("ldiv" + this.id));
         unfade(card);
 
         // consume cost
@@ -551,9 +610,9 @@ Supplier.prototype.HireFirst = function() {
         // add to array
         cqGame.suppliers[this.key] = this;
 
-        // unhide & unfade div
+        // vis & unfade div
         var card = elid("card" + this.id);
-        unhide(card);
+        vis(card);
         unfade(card);
 
         // consume cost
@@ -599,13 +658,13 @@ function advDiv(key) {
     var cost = adv.cost.gold;       // number
 
     // "card" (container) div
-    var adiv = newEl("DIV", {id: "card" + id, class: "card hide"});
+    var adiv = newEl("DIV", {id: "card" + id, class: "col-lg-1 col-md-2 col-sm-3 col-xs-4 card invisible"});
 
     // class name
     adiv.appendChild(newEl("SPAN", {class: "title", text: title}));
 
-    // level - hidden if hero hasn't been recruited yet
-    var d1 = newEl("DIV", {id: "ldiv" + id, class: "level hide"});
+    // level - invis if hero hasn't been recruited yet
+    var d1 = newEl("DIV", {id: "ldiv" + id, class: "level invisible"});
     d1.appendChild(newEl("SPAN", {class: "info", text: "Level"}));
     d1.appendChild(newEl("SPAN", {id: "lvl" + id, class: "lvlnum", text: " "}));
     adiv.appendChild(d1);
@@ -625,7 +684,7 @@ function advDiv(key) {
         var table = newEl("TABLE", {id: "tbl" + id, class: "stats"});
         for (var stat in stats) {
             var tr = newEl("TR", {});
-            tr.appendChild(newEl("TD", {class: "label", text: stat + ": "}));
+            tr.appendChild(newEl("TD", {class: "line-item", text: stat + ": "}));
             tr.appendChild(newEl("TD", {class: "number", text: "+" + stats[stat]}));
             table.appendChild(tr)
         }
@@ -646,14 +705,15 @@ function advDiv(key) {
 // supplier divs
 function supDiv(key) {
     var sup = DEF.Suppliers[key];
-    var title = titleCase(key + "");
+    // if you change this back to singluar, remember to change the title -> key back-conversion in updateDisplay()
+    var title = titleCase(key + "s");
     var id = sup.id;
     var boosts = sup.boosts;
     var cost = sup.cost.gold;
     var icon = sup.icon;
 
     // "card" (container) div
-    var adiv = newEl("DIV", {id: "card" + id, class: "card hide"});
+    var adiv = newEl("DIV", {id: "card" + id, class: "col-lg-1 col-md-2 col-sm-3 col-xs-4 card invisible"});
 
     // supplier name
     adiv.appendChild(newEl("SPAN", {class: "title", text: title}));
@@ -671,7 +731,7 @@ function supDiv(key) {
         var table = newEl("TABLE", {id: "tbl" + id, class: "boosts"});
         for (var boost in boosts) {
             var tr = newEl("TR", {});
-            tr.appendChild(newEl("TD", {class: "label", text: boost + ": "}));
+            tr.appendChild(newEl("TD", {class: "line-item", text: boost + ": "}));
             tr.appendChild(newEl("TD", {class: "number", text: "+" + boosts[boost]}));
             table.appendChild(tr)
         }
@@ -695,16 +755,24 @@ function supDiv(key) {
 function elid(id) {
     return document.getElementById(id);
 }
-function hide(el) {
-    //el.style.visibility = "hidden";
-    el.classList.add("hide");
+function hasclass(el, cls) {
+    if (el.classList.contains(cls)) {
+        return true;
+    }
+    else {
+        return false;
+    }
 }
-function unhide(el) {
-    //el.style.visibility = "visible";
-    el.classList.remove("hide");
+function invis(el) {
+    el.classList.add("invisible");
+}
+function vis(el) {
+    el.classList.remove("invisible");
+}
+function toggleVis(el) {
+    el.classList.toggle("invisible");
 }
 function fade(el) {
-    //el.style.opacity = "0.5";
     el.classList.add("faded");
 }
 function unfade(el) {
@@ -715,6 +783,9 @@ function collapse(el) {
 }
 function expand(el) {
     el.classList.remove("collapse");
+}
+function toggleCollapse(el) {
+    el.classList.toggle("collapse");
 }
 function retext(el, newText) {
     // changes the text of the first text node within [el]
@@ -818,6 +889,35 @@ function progressBar(barID, newValue, instant) {
 document.addEventListener("DOMContentLoaded", function(event) {
     setupHeroes();
     setupSuppliers();
-    equalWidths("card");
+    //equalWidths("card");
+
+    // game loop
+    var myInterval = window.setInterval(function() {
+
+        gameUpdate();
+    }, cqGame.updateTimer);
 });
+
+
+// show/hide right "about" pane
+// adapted from https://stackoverflow.com/a/23025781/7933110
+function toggleAbout() {
+    var side = elid("sidebar-wrapper");
+    var main = elid("main-wrapper");
+
+    if (side.classList.contains("open")) {
+        side.classList.remove("col-md-3");
+        main.classList.remove("col-md-9");
+        main.classList.add("col-md-12");
+        side.classList.add("hidden");
+        side.classList.remove("open");
+    }
+    else {
+        side.classList.add("col-md-3");
+        main.classList.add("col-md-9");
+        main.classList.remove("col-md-12");
+        side.classList.remove("hidden");
+        side.classList.add("open");
+    }
+}
 

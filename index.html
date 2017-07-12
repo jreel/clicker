@@ -2,7 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- external libs -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- font libs -->
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Hammersmith+One" />
+
+    <!-- my stuff -->
     <link rel="stylesheet" type="text/css" href="layout.css">
     <link rel="stylesheet" type="text/css" href="anim.css">
     <script type="text/javascript" src="def.js"></script>
@@ -11,15 +21,18 @@
 </head>
 <body>
 
-<h1>ClickerQuest
-    <div id="goldDisplay">
-        <span class="label">Gold: </span><span id="goldAmt" class="number">0</span> <span class="gold"></span>
-    </div>
-    <button id="saveBtn" class="floatright" onClick="save()">Save</button>
-    <button id="loadBtn" class="floatright" onClick="load()">Load</button>
-</h1>
+<div id="main-wrapper" class="col-md-12">
+<div class="container-fluid">
+    <h1>ClickerQuest</h1>
+        <div id="goldDisplay">
+            <span class="line-item">Gold: </span><span id="goldAmt" class="number">0</span> <span class="gold"></span>
+        </div>
+        <button id="aboutBtn" class="floatright" onClick="toggleAbout()">About</button>
+        <button id="saveBtn" class="floatright" onClick="save()">Save</button>
+        <button id="loadBtn" class="floatright" onClick="load()">Load</button>
+</div>
 
-<div id="quest flexbox">
+<div id="quest">
     <button id="questBtn" class="floatleft" onClick="playerClick()">Quest</button>
     <div class="l-pad">
         <div class="flexbox">
@@ -27,9 +40,9 @@
             <span class="countdown" id="questCD">00:00:00</span>
         </div>
 
-        <div id="status" class="hide">Battle!</div>
+        <div id="status" class="invisible">Battle!</div>
 
-        <div id="battle" class="flexcenter autowidth hide">
+        <div id="battle" class="flexcenter autowidth invisible">
             <progress id="partyBar" class="autowidth" max="100" value="15"></progress>
             <span class="emoji">⚔️</span>
             <progress id="enemyBar" class="autowidth" max="100" value="15"></progress>
@@ -50,7 +63,6 @@
 
 <fieldset id="party" class="">
     <legend>Heroes:</legend>
-
     <!--
     <div class="card">
         <span class="title">Fighter</span>
@@ -96,17 +108,35 @@
     </div>
     -->
 </fieldset>
+</div> <!-- #main-wrapper -->
 
-<div id="technical">
-    This game uses emoji (included in <a href="https://emojipedia.org/unicode-7.0/">Unicode 7.0</a>) to display some icons.
-    If the symbols don't show up for you, it may mean that you're:
-    <ol>
-        <li>not running the <a href="https://updatemybrowser.org/">latest version</a> of your browser, or</li>
-        <li>lacking an installed font which supports emoji, or</li>
-        <li>using some flavor of Linux <a href="http://probablement.net/txt/emojilinux">which lacks emoji support</a>.</li>
-    </ol>
-    If you're interested, you might try resolving the situation by installing the <a href="http://eosrei.github.io/emojione-color-font/full-demo.html">EmojiOne</a> font.
-</div>
+<!--
+<a id="aToggle" href="#about" data-toggle="collapse" data-target="#about">About</a>
+-->
+<div id="sidebar-wrapper" class="hidden">
+<div id="about" class="">
+    <p>
+        ClickerQuest is based on similar games, such as Clicker Heroes, CivClicker, Cookie Clicker, etc.
+        It's a work-in-progress, so check back regularly for updates,
+        and please send in any bug reports or feature requests!
+        <br><br>
+        Developed by <a href="http://github.com/jreel">J. Reel</a>.
+    </p>
+
+    <p id="technical">
+        <h3>Technical Stuff:</h3>
+        This game uses emoji (included in <a href="https://emojipedia.org/unicode-7.0/">Unicode 7.0</a>) to display some icons.
+        If the symbols don't show up for you, it may mean that you're:
+        <ol>
+            <li>not running the <a href="https://updatemybrowser.org/">latest version</a> of your browser, or</li>
+            <li>lacking an installed font which supports emoji, or</li>
+            <li>using some flavor of Linux <a href="http://probablement.net/txt/emojilinux">which lacks emoji support</a>.</li>
+        </ol>
+        If you're interested, you might try resolving the situation by installing the <a href="http://eosrei.github.io/emojione-color-font/full-demo.html">EmojiOne</a> font.
+    </p>
+</div> <!-- #about -->
+</div> <!-- #about-wrapper -->
+
 
 </body>
 </html>
